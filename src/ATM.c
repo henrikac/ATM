@@ -20,7 +20,6 @@
 
 typedef enum { false, true } bool;
 
-void get_input(int *withdraw);
 bool is_valid_input(int amout_to_withdraw);
 void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int *tens);
 
@@ -32,7 +31,22 @@ int main(void)
   int twenty_notes = 0;
   int ten_notes = 0;
 
-  get_input(&withdraw);
+  /* prompt user for input */
+  while (true)
+  {
+    printf("How much do you want to withdraw? ");
+    if (scanf(" %d", &withdraw) != 1)
+    {
+      printf("Invalid input\n");
+      fflush(stdin);
+      continue;
+    }
+
+    if (is_valid_input(withdraw))
+      break;
+    fflush(stdin);
+  }
+
   payout(&withdraw, &hundred_notes, &fifty_notes, &twenty_notes, &ten_notes);
 
   printf("\n-------");
@@ -40,28 +54,8 @@ int main(void)
   printf("\n%d fifties", fifty_notes);
   printf("\n%d twenties", twenty_notes);
   printf("\n%d tens", ten_notes);
-  printf("\n%d left", withdraw);
 
   return EXIT_SUCCESS;
-}
-
-/* prompt user for input until valid input entered */
-void get_input(int *withdraw)
-{
-  while (true)
-  {
-    printf("How much do you want to withdraw? ");
-    if (scanf(" %d", withdraw) != 1)
-    {
-      printf("Invalid input\n");
-      fflush(stdin);
-      continue;
-    }
-
-    if (is_valid_input(*withdraw))
-      break;
-    fflush(stdin);
-  }
 }
 
 bool is_valid_input(int amout_to_withdraw)
@@ -82,15 +76,17 @@ bool is_valid_input(int amout_to_withdraw)
 
 void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int *tens)
 {
-  *hundreds = *payout_amount / 100;
-  *payout_amount -= *hundreds * 100;
+  int remaind_amount = *payout_amount;
 
-  *fifties = *payout_amount / 50;
-  *payout_amount -= *fifties * 50;
+  *hundreds = remaind_amount / 100;
+  remaind_amount -= *hundreds * 100;
 
-  *twenties = *payout_amount / 20;
-  *payout_amount -= *twenties * 20;
+  *fifties = remaind_amount / 50;
+  remaind_amount -= *fifties * 50;
 
-  *tens = *payout_amount / 10;
-  *payout_amount -= *tens * 10;
+  *twenties = remaind_amount / 20;
+  remaind_amount -= *twenties * 20;
+
+  *tens = remaind_amount / 10;
+  remaind_amount -= *tens * 10;
 }
