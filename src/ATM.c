@@ -18,37 +18,46 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+  #define CLEAR "cls"
+#else
+  #define CLEAR "clear"
+#endif
+
 typedef enum { false, true } bool;
 
 bool is_valid_input(int amout_to_withdraw);
 void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int *tens);
+void calculate_notes(int *remaind_amount, int *note_type, int note_value);
 
 int main(void)
 {
-  int withdraw = 0;
-  int hundred_notes = 0;
-  int fifty_notes = 0;
-  int twenty_notes = 0;
-  int ten_notes = 0;
+  int withdraw = 0, hundred_notes = 0, fifty_notes = 0,
+      twenty_notes = 0, ten_notes = 0;
 
-  /* prompt user for input */
+  /* clear console */
+  system(CLEAR);
+
+  /* prompt user for input until valid input is entered */
   while (true)
   {
     printf("How much do you want to withdraw? ");
-    if (scanf(" %d", &withdraw) != 1)
+    if (scanf(" %d", &withdraw) != 1) /* if user enters a char or string */
     {
       printf("Invalid input\n");
-      fflush(stdin);
+      fflush(stdin); /* flush output buffer */
       continue;
     }
 
-    if (is_valid_input(withdraw))
+    if (is_valid_input(withdraw)) /* end loop if input is okay */
       break;
     fflush(stdin);
   }
 
+  /* calculate what $-notes to pay out */
   payout(&withdraw, &hundred_notes, &fifty_notes, &twenty_notes, &ten_notes);
 
+  /* final output */
   printf("\n-------");
   printf("\n%d hundreds", hundred_notes);
   printf("\n%d fifties", fifty_notes);
@@ -58,6 +67,7 @@ int main(void)
   return EXIT_SUCCESS;
 }
 
+/* function to check if entered input is valid */
 bool is_valid_input(int amout_to_withdraw)
 {
   if (amout_to_withdraw < 1)
@@ -76,17 +86,14 @@ bool is_valid_input(int amout_to_withdraw)
 
 void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int *tens)
 {
-  int remaind_amount = *payout_amount;
+  calculate_notes(payout_amount, hundreds, 100);
+  calculate_notes(payout_amount, fifties, 50);
+  calculate_notes(payout_amount, twenties, 20);
+  calculate_notes(payout_amount, tens, 10);
+}
 
-  *hundreds = remaind_amount / 100;
-  remaind_amount -= *hundreds * 100;
-
-  *fifties = remaind_amount / 50;
-  remaind_amount -= *fifties * 50;
-
-  *twenties = remaind_amount / 20;
-  remaind_amount -= *twenties * 20;
-
-  *tens = remaind_amount / 10;
-  remaind_amount -= *tens * 10;
+void calculate_notes(int *remaind_amount, int *note_type, int note_value)
+{
+  *note_type = *remaind_amount / note_value;
+  *remaind_amount -= *note_type * note_value;
 }
