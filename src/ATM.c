@@ -24,13 +24,17 @@
   #define CLEAR "clear"
 #endif
 
+#define INVALID_INPUT -1
+
 typedef enum { false, true } bool;
 
+void get_input(int *withdraw);
 bool is_valid_input(int amout_to_withdraw);
 void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int *tens);
 void calculate_notes(int *remaind_amount, int *note_type, int note_value);
+void display_output(int hundreds, int fifties, int twenties, int tens);
 
-int main(void)
+int main(int argc, char *argv[])
 {
   int withdraw = 0, hundred_notes = 0, fifty_notes = 0,
       twenty_notes = 0, ten_notes = 0;
@@ -38,33 +42,45 @@ int main(void)
   /* clear console */
   system(CLEAR);
 
-  /* prompt user for input until valid input is entered */
+  /* check for input from commandline */
+  if (argc == 2)
+  {
+    if (sscanf(argv[1], " %d", &withdraw) != 1 || !is_valid_input(withdraw))
+    {
+      printf("\nInvalid input");
+      return INVALID_INPUT;
+    }
+  }
+  else
+  {
+    get_input(&withdraw);
+  }
+
+  /* calculate what to pay out */
+  payout(&withdraw, &hundred_notes, &fifty_notes, &twenty_notes, &ten_notes);
+
+  /* final output */
+  display_output(hundred_notes, fifty_notes, twenty_notes, ten_notes);
+
+  return EXIT_SUCCESS;
+}
+
+void get_input(int *withdraw)
+{
   while (true)
   {
     printf("How much do you want to withdraw? ");
-    if (scanf(" %d", &withdraw) != 1) /* if user enters a char or string */
+    if (scanf(" %d", withdraw) != 1) /* if user enters a char or string */
     {
       printf("Invalid input\n");
       fflush(stdin); /* flush output buffer */
       continue;
     }
 
-    if (is_valid_input(withdraw)) /* end loop if input is okay */
+    if (is_valid_input(*withdraw)) /* end loop if input is okay */
       break;
     fflush(stdin);
   }
-
-  /* calculate what $-notes to pay out */
-  payout(&withdraw, &hundred_notes, &fifty_notes, &twenty_notes, &ten_notes);
-
-  /* final output */
-  printf("\n-------");
-  printf("\n%d hundreds", hundred_notes);
-  printf("\n%d fifties", fifty_notes);
-  printf("\n%d twenties", twenty_notes);
-  printf("\n%d tens", ten_notes);
-
-  return EXIT_SUCCESS;
 }
 
 /* function to check if entered input is valid */
@@ -86,14 +102,28 @@ bool is_valid_input(int amout_to_withdraw)
 
 void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int *tens)
 {
-  calculate_notes(payout_amount, hundreds, 100);
-  calculate_notes(payout_amount, fifties, 50);
-  calculate_notes(payout_amount, twenties, 20);
-  calculate_notes(payout_amount, tens, 10);
+  int amount_left = *payout_amount;
+  
+  calculate_notes(&amount_left, hundreds, 100);
+  calculate_notes(&amount_left, fifties, 50);
+  calculate_notes(&amount_left, twenties, 20);
+  calculate_notes(&amount_left, tens, 10);
 }
 
 void calculate_notes(int *remaind_amount, int *note_type, int note_value)
 {
   *note_type = *remaind_amount / note_value;
   *remaind_amount -= *note_type * note_value;
+}
+
+void display_output(int hundreds, int fifties, int twenties, int tens)
+{
+  if (hundreds > 0)
+    printf("\n%dx $100", hundreds);
+  if (fifties > 0)
+    printf("\n%dx $50", fifties);
+  if (twenties > 0)
+    printf("\n%dx $20", twenties);
+  if (tens > 0)
+    printf("\n%dx $10", tens);
 }
