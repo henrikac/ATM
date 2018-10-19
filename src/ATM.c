@@ -30,7 +30,7 @@ typedef enum { false, true } bool;
 
 void get_input(int *withdraw);
 bool is_valid_input(int amout_to_withdraw);
-void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int *tens);
+void payout(int payout_amount, int *hundreds, int *fifties, int *twenties, int *tens);
 int calculate_notes(int *remaind_amount, int note_value);
 void display_output(int hundreds, int fifties, int twenties, int tens);
 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
   }
 
   /* calculate what to pay out */
-  payout(&withdraw, &hundred_notes, &fifty_notes, &twenty_notes, &ten_notes);
+  payout(withdraw, &hundred_notes, &fifty_notes, &twenty_notes, &ten_notes);
 
   /* final output */
   display_output(hundred_notes, fifty_notes, twenty_notes, ten_notes);
@@ -94,9 +94,9 @@ bool is_valid_input(int amout_to_withdraw)
   return true;  
 }
 
-void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int *tens)
+void payout(int payout_amount, int *hundreds, int *fifties, int *twenties, int *tens)
 {
-  int amount_left = *payout_amount;
+  int amount_left = payout_amount;
   
   *hundreds = calculate_notes(&amount_left, 100);
   *fifties = calculate_notes(&amount_left, 50);
