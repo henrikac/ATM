@@ -1,5 +1,5 @@
 /*
- * Programmer: Henrik A. Christensen     Date Completed: in progress
+ * Programmer: Henrik A. Christensen     Date Completed: 19-10-2018
  * Instructor: Kurt Nørmark              Class:          Imperative Programming
  *
  * American ATM
@@ -87,9 +87,7 @@ void get_input(int *withdraw)
 bool is_valid_input(int amout_to_withdraw)
 {
   if (amout_to_withdraw < 1 || amout_to_withdraw % 10 != 0)
-  {
     return false;
-  }
   
   return true;  
 }
