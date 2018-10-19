@@ -11,8 +11,8 @@
  * examples:
  * 
  * 180 should return 1x $100, 1x $50, 1x $20 and 1x $10
- *  10 should return 0x $100, 0x $50, 0x $20 and 1x $10
- * 570 should return 5x $100, 1x $50, 1x $20 and 0x $10
+ *  10 should return 1x $10
+ * 570 should return 5x $100, 1x $50, 1x $20
 */
 
 #include <stdio.h>
@@ -31,7 +31,7 @@ typedef enum { false, true } bool;
 void get_input(int *withdraw);
 bool is_valid_input(int amout_to_withdraw);
 void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int *tens);
-void calculate_notes(int *remaind_amount, int *note_type, int note_value);
+int calculate_notes(int *remaind_amount, int note_value);
 void display_output(int hundreds, int fifties, int twenties, int tens);
 
 int main(int argc, char *argv[])
@@ -104,16 +104,18 @@ void payout(int *payout_amount, int *hundreds, int *fifties, int *twenties, int 
 {
   int amount_left = *payout_amount;
   
-  calculate_notes(&amount_left, hundreds, 100);
-  calculate_notes(&amount_left, fifties, 50);
-  calculate_notes(&amount_left, twenties, 20);
-  calculate_notes(&amount_left, tens, 10);
+  *hundreds = calculate_notes(&amount_left, 100);
+  *fifties = calculate_notes(&amount_left, 50);
+  *twenties = calculate_notes(&amount_left, 20);
+  *tens = calculate_notes(&amount_left, 10);
 }
 
-void calculate_notes(int *remaind_amount, int *note_type, int note_value)
+int calculate_notes(int *remaind_amount, int note_value)
 {
-  *note_type = *remaind_amount / note_value;
-  *remaind_amount -= *note_type * note_value;
+  int num_notes = *remaind_amount / note_value;
+  *remaind_amount -= num_notes * note_value;
+
+  return num_notes;
 }
 
 void display_output(int hundreds, int fifties, int twenties, int tens)
