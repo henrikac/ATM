@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
   {
     if (sscanf(argv[1], " %d", &withdraw) != 1 || !is_valid_input(withdraw))
     {
-      printf("\nInvalid input");
+      printf("\nInvalid input\nPlease enter a number greater than 0 that's divisible by 10\n\n");
       return INVALID_INPUT;
     }
   }
@@ -72,7 +72,7 @@ void get_input(int *withdraw)
     printf("How much do you want to withdraw? ");
     if (scanf(" %d", withdraw) != 1) /* if user enters a char or string */
     {
-      printf("Invalid input\n");
+      printf("Invalid input\nPlease enter a number greater than 0 that's divisible by 10\n\n");
       fflush(stdin); /* flush output buffer */
       continue;
     }
@@ -86,14 +86,8 @@ void get_input(int *withdraw)
 /* function to check if entered input is valid */
 bool is_valid_input(int amout_to_withdraw)
 {
-  if (amout_to_withdraw < 1)
+  if (amout_to_withdraw < 1 || amout_to_withdraw % 10 != 0)
   {
-    printf("You have to withdraw more than 0\n");
-    return false;
-  }
-  else if (amout_to_withdraw % 10 != 0)
-  {
-    printf("The amount you want to withdraw has to be divisible by 10\n");
     return false;
   }
   
